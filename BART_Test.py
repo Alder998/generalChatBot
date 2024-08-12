@@ -1,5 +1,5 @@
 from Model import BARTModel as bart
 
-answer = bart.BARTModel("Come stai?").generateAnswer()
+answer = bart.BARTModel("Ciao, come stai oggi?").generateAnswer()
 
 print(answer)

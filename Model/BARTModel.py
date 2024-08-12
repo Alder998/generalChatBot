@@ -1,7 +1,7 @@
 # Small experiment to create a BART-based ChatBot
 
-from transformers import BartTokenizer, BartForConditionalGeneration
 import torch
+from transformers import BartTokenizer, BartForConditionalGeneration
 
 class BARTModel:
     def __init__(self, inputText):
@@ -16,7 +16,8 @@ class BARTModel:
 
         inputs = tokenizer(self.inputText, return_tensors='pt', max_length=1024, truncation=True)
 
-        outputs = model.generate(inputs['input_ids'], max_length=50, num_beams=5, early_stopping=True)
+        outputs = model.generate(inputs['input_ids'], max_length=50, num_beams=5, temperature=0.7,
+                                 top_k=50, top_p=0.95, early_stopping=True)
 
         generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
