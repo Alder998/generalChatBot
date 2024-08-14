@@ -1,5 +1,5 @@
-from Model import GPT2Model as bart
+from Model import GPT2Model as gpt2
 
-answer = bart.GPT2Model("How long is the Nile River?").generateAnswer()
+answer = gpt2.GPT2Model("What is your name? Please give me a short answer").generateAnswer()
 
 print(answer)

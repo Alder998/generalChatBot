@@ -14,12 +14,24 @@ class GPT2Model:
         tokenizer = GPT2Tokenizer.from_pretrained(model_name)
         model = GPT2LMHeadModel.from_pretrained(model_name)
 
-        inputs = tokenizer(self.inputText, return_tensors='pt', max_length=1024, truncation=True)
+        inputs = tokenizer(self.inputText, return_tensors='pt')
 
         attention_mask = inputs["attention_mask"]
-
-        outputs = model.generate(inputs['input_ids'], num_return_sequences=1, attention_mask=attention_mask, max_new_tokens=50,
-                                 eos_token_id=tokenizer.eos_token_id)
+        outputs = model.generate(inputs['input_ids'],
+                                 num_return_sequences=1,
+                                 num_beams=5,
+                                 attention_mask=attention_mask,
+                                 #temperature=0.7,
+                                 #top_k=50,
+                                 #top_p=0.9,
+                                 max_length=200,
+                                 max_new_tokens=50,
+                                 eos_token_id=tokenizer.eos_token_id,
+                                 pad_token_id=tokenizer.eos_token_id,
+                                 #repetition_penalty=2.0,
+                                 no_repeat_ngram_size=5,
+                                 early_stopping=True
+                                 )
 
         generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
