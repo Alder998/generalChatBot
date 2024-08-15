@@ -20,19 +20,20 @@ class GPT2Model:
         outputs = model.generate(inputs['input_ids'],
                                  num_return_sequences=1,
                                  num_beams=5,
+                                 do_sample=True,
                                  attention_mask=attention_mask,
-                                 #temperature=0.7,
-                                 #top_k=50,
+                                 temperature=0.5,
+                                 top_k=30,
                                  #top_p=0.9,
-                                 max_length=200,
-                                 max_new_tokens=50,
+                                 #max_length=200,
+                                 max_new_tokens=500,
                                  eos_token_id=tokenizer.eos_token_id,
                                  pad_token_id=tokenizer.eos_token_id,
-                                 #repetition_penalty=2.0,
+                                 repetition_penalty=2.0,
                                  no_repeat_ngram_size=5,
                                  early_stopping=True
                                  )
 
         generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-        return generated_text
+        return generated_text[len(self.inputText):len(generated_text)]
