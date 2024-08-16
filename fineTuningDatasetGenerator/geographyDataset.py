@@ -6,76 +6,89 @@ import pandas as pd
 import psycopg2
 from sqlalchemy import create_engine
 
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"}
+class geographyScraper:
+    def __init__(self):
+        pass
 
-# Example Dataset
-cities = pd.read_excel(r"C:\Users\alder\Desktop\Projects\Fine Tuning Data\Cities Italy.xlsx")
+    def downloadCitiesDescriptionBulkData (self, input_data, populationHigherThan=0, populationLowerThan=0):
 
-# Filter the data (if necessary)
-cities = cities[(cities['population'] < 11000) & (cities['population'] > 10000)]
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"}
 
-citiesDatabase = list()
-for index, city in enumerate(list(cities['city'])):
+        # Example Dataset - must have a pre-determined shape and columns name
+        cities = input_data
 
-    print('Processing City/Town:', city, ' - Progress:', round((index / len(cities['city'])) * 100, 2), '%')
+        # Filter the data (if necessary)
+        if (populationLowerThan != 0) & (populationHigherThan != 0):
+            cities = cities[(cities['population'] < populationLowerThan) & (cities['population'] > populationHigherThan)]
+        elif populationHigherThan != 0:
+            cities = cities[cities['population'] > populationHigherThan]
+        elif populationLowerThan != 0:
+            cities = cities[cities['population'] < populationLowerThan]
 
-    # Adapt the city name
-    if len(city) > 1:
-        city = city.replace(' ', '_')
+        citiesDatabase = list()
+        for index, city in enumerate(list(cities['city'])):
 
-    target_url = "https://en.wikipedia.org/wiki/" + city
+            print('Processing City/Town:', city, ' - Progress:', round((index / len(cities['city'])) * 100, 2), '%')
 
-    resp = requests.get(target_url, headers=headers)
-    soup = BeautifulSoup(resp.text, 'html.parser')  # Pare che l'URL sia libero per fare scraping
+            # Adapt the city name
+            if len(city) > 1:
+                city = city.replace(' ', '_')
 
-    content_div = soup.find('div', class_='mw-content-ltr mw-parser-output', href=False)
+            target_url = "https://en.wikipedia.org/wiki/" + city
 
-    try:
-        # Find paragraph <p> in the div
-        allParagraph = content_div.find_all('p')
+            resp = requests.get(target_url, headers=headers)
+            soup = BeautifulSoup(resp.text, 'html.parser')  # Pare che l'URL sia libero per fare scraping
 
-        paragraphData = []
-        for paragraph in allParagraph:
-            if paragraph.text:
-                paragraphData.append(paragraph.text)
-        paragraphData = " ".join(paragraphData)
-        paragraphData = paragraphData.replace('\n', '')
+            content_div = soup.find('div', class_='mw-content-ltr mw-parser-output', href=False)
 
-        # Format to save to SQL
-        cityData = pd.DataFrame(pd.Series(city)).set_axis(['City'], axis=1)
-        paragraphData = pd.DataFrame(pd.Series(paragraphData)).set_axis(['City Description'], axis=1)
-        finalPayload = pd.concat([cityData, paragraphData], axis=1)
-        citiesDatabase.append(finalPayload)
+            try:
+                # Find paragraph <p> in the div
+                allParagraph = content_div.find_all('p')
 
-    except Exception as e:
-        print('No Wikipedia Data on the city:', city)
+                paragraphData = []
+                for paragraph in allParagraph:
+                    if paragraph.text:
+                        paragraphData.append(paragraph.text)
+                paragraphData = " ".join(paragraphData)
+                paragraphData = paragraphData.replace('\n', '')
+
+                # Format to save to SQL
+                cityData = pd.DataFrame(pd.Series(city)).set_axis(['City'], axis=1)
+                paragraphData = pd.DataFrame(pd.Series(paragraphData)).set_axis(['City Description'], axis=1)
+                finalPayload = pd.concat([cityData, paragraphData], axis=1)
+                citiesDatabase.append(finalPayload)
+
+            except Exception as e:
+                print('No Wikipedia Data on the city:', city)
 
 
-citiesDatabase = pd.concat([series for series in citiesDatabase], axis=0).reset_index(drop=True)
+        citiesDatabase = pd.concat([series for series in citiesDatabase], axis=0).reset_index(drop=True)
 
-# Load the existing Data
-engine = create_engine('postgresql://postgres:Lavagna123!@localhost:5432/fineTuningData')
-query = 'SELECT * FROM public."ItalianCitiesData"'
-baseData = pd.read_sql(query, engine)
+        # Load the existing Data
+        engine = create_engine('postgresql://postgres:Lavagna123!@localhost:5432/fineTuningData')
+        query = 'SELECT * FROM public."ItalianCitiesData"'
+        baseData = pd.read_sql(query, engine)
 
-# Append The new data to the old ones, drop duplicates
-finalDataset = pd.concat([baseData, citiesDatabase], axis=0).drop_duplicates(keep='last').reset_index(drop=True)
+        # Append The new data to the old ones, drop duplicates
+        finalDataset = pd.concat([baseData, citiesDatabase], axis=0).drop_duplicates(keep='last').reset_index(drop=True)
 
-# Save the data in the database
-file = finalDataset
-connection = psycopg2.connect(
-    database="fineTuningData",
-    user="postgres",
-    password="Lavagna123!",
-    host="localhost",
-    port="5432"
-)
-engine = create_engine('postgresql://postgres:Lavagna123!@localhost:5432/fineTuningData')
-file.to_sql('ItalianCitiesData', engine, if_exists='replace', index=False)
+        # Save the data in the database
+        file = finalDataset
+        connection = psycopg2.connect(
+            database="fineTuningData",
+            user="postgres",
+            password="Lavagna123!",
+            host="localhost",
+            port="5432"
+        )
+        engine = create_engine('postgresql://postgres:Lavagna123!@localhost:5432/fineTuningData')
+        file.to_sql('ItalianCitiesData', engine, if_exists='replace', index=False)
 
-# Close the connection to the DB
-connection.close()
+        # Close the connection to the DB
+        connection.close()
 
-# Print the final Data
-print(finalDataset)
+        # Print the final Data
+        print(finalDataset)
+
+        return finalDataset
