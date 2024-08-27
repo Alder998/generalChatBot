@@ -4,7 +4,7 @@ import pandas as pd
 input_data = pd.read_excel(r"C:\Users\alder\Desktop\Projects\Fine Tuning Data\World Cities_short.xlsx")
 
 # Filter for Europe
-input_data = input_data[(input_data['country'] == 'Germany') | (input_data['country'] == 'France') | (input_data['country'] == 'Spain') |
-                        (input_data['country'] == 'Portugal') | (input_data['country'] == 'Germany')]
+input_data = input_data[(input_data['country'] == 'Serbia') | (input_data['country'] == 'Bosnia and Herzegovina') | (input_data['country'] == 'Belgium')
+                        | (input_data['country'] == 'Netherlands') | (input_data['country'] == 'Luxembourg')]
 
-geo.geographyScraper().downloadCitiesDescriptionBulkData(input_data, populationHigherThan=15000, populationLowerThan=30000)
+geo.geographyScraper().downloadCitiesDescriptionBulkData(input_data, populationHigherThan=10000, populationLowerThan=0)
