@@ -2,6 +2,8 @@
 
 import torch
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
+from datasets import load_dataset
+from fineTuningDatasetGenerator import fineTuning_Utils as utils
 
 class GPT2Model:
     def __init__(self, inputText):
@@ -37,3 +39,5 @@ class GPT2Model:
         generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
         return generated_text[len(self.inputText):len(generated_text)]
+
+
