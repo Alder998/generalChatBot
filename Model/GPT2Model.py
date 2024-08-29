@@ -6,13 +6,12 @@ from datasets import load_dataset
 from fineTuningDatasetGenerator import fineTuning_Utils as utils
 
 class GPT2Model:
-    def __init__(self, inputText):
-        self.inputText = inputText
+    def __init__(self, prompt):
+        self.inputText = prompt
         pass
 
-    def generateAnswer (self):
+    def generateAnswer (self, model_name='gpt2'):
 
-        model_name = 'gpt2'
         tokenizer = GPT2Tokenizer.from_pretrained(model_name)
         model = GPT2LMHeadModel.from_pretrained(model_name)
 

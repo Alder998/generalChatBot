@@ -1,6 +1,8 @@
 # General file for multi-usage functions for processing text data for fine-tuning
 
 import pandas as pd
+import torch
+from torch.utils.data import DataLoader, Dataset
 
 class fineTuning_utils:
 
@@ -28,3 +30,23 @@ class fineTuning_utils:
         totalStringList = ' '.join(totalStringList)
 
         return totalStringList
+
+# Text loader
+
+class TextDataset(Dataset):
+    def __init__(self, encodings):
+        self.input_ids = encodings.input_ids
+        self.attention_mask = encodings.attention_mask
+
+        # Imposta i labels come input_ids
+        self.labels = encodings.input_ids.clone()
+
+    def __getitem__(self, idx):
+        return {
+            'input_ids': self.input_ids[idx],
+            'attention_mask': self.attention_mask[idx],
+            'labels': self.labels[idx]
+        }
+
+    def __len__(self):
+        return len(self.input_ids)
