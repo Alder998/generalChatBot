@@ -27,6 +27,7 @@ class fineTuning_utils:
                 # Compose the long Text for any single Item
                 continuousTextSingleString = ('<' + key.upper() + '> ' + str(value) + ' </' + key.upper() + '> ')
                 totalStringList.append(continuousTextSingleString)
+            totalStringList.append('\n' + '\n')
         totalStringList = ' '.join(totalStringList)
 
         return totalStringList
