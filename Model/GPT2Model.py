@@ -18,16 +18,20 @@ class GPT2Model:
         inputs = tokenizer(self.inputText, return_tensors='pt')
 
         attention_mask = inputs["attention_mask"]
+
+        # Logging
+        print('generating...')
+
         outputs = model.generate(inputs['input_ids'],
                                  num_return_sequences=1,
-                                 num_beams=5,
+                                 num_beams=2,
                                  do_sample=True,
                                  attention_mask=attention_mask,
                                  temperature=0.5,
                                  top_k=30,
-                                 #top_p=0.9,
+                                 top_p=0.9,
                                  #max_length=200,
-                                 max_new_tokens=500,
+                                 max_new_tokens=1000,
                                  eos_token_id=tokenizer.eos_token_id,
                                  pad_token_id=tokenizer.eos_token_id,
                                  repetition_penalty=2.0,

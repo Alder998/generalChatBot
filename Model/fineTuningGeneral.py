@@ -12,7 +12,7 @@ class fineTuningGeneral:
     def __init__(self):
         pass
 
-    def fineTuningModel (self, baseModel, datasetPandas, epochs):
+    def fineTuningModel (self, baseModel, datasetPandas, epochs, saved_model_name='fine_tuned_gpt2'):
         # Load the Model and the Tokenizer that are needed to be trained
         tokenizer = GPT2Tokenizer.from_pretrained(baseModel)
         model = GPT2LMHeadModel.from_pretrained(baseModel)
@@ -45,7 +45,9 @@ class fineTuningGeneral:
         )
         trainer.train()
 
-        model.save_pretrained('./fine_tuned_gpt2')
-        tokenizer.save_pretrained('./fine_tuned_gpt2')
+        model.save_pretrained('./' + saved_model_name)
+        tokenizer.save_pretrained('./' + saved_model_name)
+
+        print('Model and Tokenizer saved correctly! Find them at ' + saved_model_name)
 
         return preparedText
