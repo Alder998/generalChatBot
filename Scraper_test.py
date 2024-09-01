@@ -9,4 +9,4 @@ input_data = input_data[(input_data['country'] == 'Serbia') | (input_data['count
 
 #geo.geographyScraper().(input_data, populationHigherThan=10000, populationLowerThan=0)
 
-geo.geographyScraper().integrateDBWithCoordinates()
+geo.geographyScraper().integrateDB()
