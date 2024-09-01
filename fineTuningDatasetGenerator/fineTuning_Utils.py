@@ -25,7 +25,7 @@ class fineTuning_utils:
         for singleDict in dictList:
             for key, value in singleDict.items():
                 # Compose the long Text for any single Item
-                continuousTextSingleString = ('<' + key.upper() + '> ' + str(value) + ' </' + key.upper() + '> ')
+                continuousTextSingleString = ('<' + key.upper() + '> ' + str(value) + ' </' + key.upper() + '> ' + '\n')
                 totalStringList.append(continuousTextSingleString)
             totalStringList.append('\n' + '\n')
         totalStringList = ' '.join(totalStringList)

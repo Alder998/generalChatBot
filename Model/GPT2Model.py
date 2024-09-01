@@ -28,11 +28,11 @@ class GPT2Model:
                                  num_beams=2,
                                  do_sample=True,
                                  attention_mask=attention_mask,
-                                 temperature=0.9,
+                                 temperature=1.5,
                                  top_k=30,
                                  top_p=0.9,
                                  #max_length=200,
-                                 max_new_tokens=100,
+                                 max_new_tokens=50,
                                  eos_token_id=tokenizer.eos_token_id,
                                  pad_token_id=tokenizer.eos_token_id,
                                  #repetition_penalty=2.0,
@@ -42,8 +42,12 @@ class GPT2Model:
 
         generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
+        # Post-processing to get concise Answers
+        generated_text = generated_text.split('.')[0] + '.'
+
         print('Answer generated correctly!')
 
+        # Truncate the answers to avoid the question repetition
         return generated_text[len(prompt):len(generated_text)]
 
     # Try to put it into a Question/Answer setting
