@@ -77,8 +77,15 @@ class geographyScraper:
         # merge the additional Information
         allCitiesFile = pd.read_excel(r"C:\Users\alder\Desktop\Projects\Fine Tuning Data\World Cities.xlsx")
         finalDataset = finalDataset.merge(
-            allCitiesFile[['city', 'lat', 'lng', 'country', 'iso2', 'iso3', 'admin_name', 'capital', 'population']],
+            allCitiesFile[[['city','lat','lng','country','admin_name','population']]],
             left_on=['City'], right_on=['city'], how='left')
+
+        finalDataset['Population'] = finalDataset['population'].apply(lambda x: f"{x:,}")
+        del [finalDataset['population']]
+        finalDataset['Region'] = finalDataset['admin_name']
+        del [finalDataset['admin_name']]
+
+        finalDataset = finalDataset.drop_duplicates()
 
         # Save the data in the database
         file = finalDataset

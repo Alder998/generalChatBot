@@ -8,6 +8,6 @@ query = 'SELECT * FROM public."ItalianCitiesData"'
 baseData = pd.read_sql(query, engine)
 baseData.fillna('No Data Available')
 
-fineTunedModel = model.fineTuningGeneral().fineTuningModel('gpt2-medium', baseData, epochs=5,
+fineTunedModel = model.fineTuningGeneral().fineTuningModel('gpt2-medium', baseData, epochs=30,
                                                            saved_model_name='fine_tuned_gpt2_medium')
 

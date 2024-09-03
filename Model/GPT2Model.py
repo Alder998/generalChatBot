@@ -32,7 +32,7 @@ class GPT2Model:
                                  top_k=30,
                                  top_p=0.9,
                                  #max_length=200,
-                                 max_new_tokens=50,
+                                 max_new_tokens=100,
                                  eos_token_id=tokenizer.eos_token_id,
                                  pad_token_id=tokenizer.eos_token_id,
                                  #repetition_penalty=2.0,
@@ -43,7 +43,7 @@ class GPT2Model:
         generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
         # Post-processing to get concise Answers
-        generated_text = generated_text.split('.')[0] + '.'
+        #generated_text = generated_text.split('.')[0:2] + '.'
 
         print('Answer generated correctly!')
 

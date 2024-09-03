@@ -20,8 +20,6 @@ class fineTuningGeneral:
         # Prepare the data that you want your Model to be trained on
         preparedText = utils.fineTuning_utils().getFineTuningContinuousTextFromDataset(datasetPandas)
 
-        print(preparedText)
-
         # Tokeinze the dataset
         inputs = tokenizer(preparedText, return_tensors='pt', max_length=1024, truncation=True)
         inputs['labels'] = inputs['input_ids'].clone()
