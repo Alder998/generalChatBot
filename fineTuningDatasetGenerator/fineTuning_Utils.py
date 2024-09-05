@@ -1,4 +1,5 @@
 # General file for multi-usage functions for processing text data for fine-tuning
+from datetime import datetime
 
 import pandas as pd
 import torch
@@ -31,6 +32,24 @@ class fineTuning_utils:
         totalStringList = ' '.join(totalStringList)
 
         return totalStringList
+
+    def processFinancialNews (self, dataPandasFormat):
+
+        # it is taken a DataFrame
+        dataPandasFormat['Day'] = pd.to_datetime(dataPandasFormat['Date']) - datetime.today()
+
+        dataPandasFormat.loc[dataPandasFormat['Day'].astype(int) < -30, 'Day'] = 'More than one Month ago'
+        dataPandasFormat.loc[dataPandasFormat['Day'] < -8 & dataPandasFormat['Day'] > -14, 'Day'] = 'Two weeks ago'
+        dataPandasFormat.loc[dataPandasFormat['Day'] < -14 & dataPandasFormat['Day'] > -30, 'Day'] = 'More than Two weeks ago'
+        dataPandasFormat.loc[dataPandasFormat['Day'] < -2 & dataPandasFormat['Day'] > -1, 'Day'] = 'Two Days ago'
+        dataPandasFormat.loc[dataPandasFormat['Day'] == -1, 'Day'] = 'Yesterday'
+        dataPandasFormat.loc[dataPandasFormat['Day'] == 0, 'Day'] = 'Today'
+
+        print(dataPandasFormat['Day'])
+
+        return dataPandasFormat
+
+
 
 # Text loader
 
