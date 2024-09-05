@@ -28,7 +28,7 @@ class GPT2Model:
                                  num_beams=2,
                                  do_sample=True,
                                  attention_mask=attention_mask,
-                                 temperature=1.5,
+                                 temperature=0.2,
                                  top_k=30,
                                  top_p=0.9,
                                  #max_length=200,
