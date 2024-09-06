@@ -4,6 +4,9 @@ from datetime import datetime
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader, Dataset
+import psycopg2
+import numpy as np
+from sqlalchemy import create_engine
 
 class fineTuning_utils:
 
@@ -31,25 +34,38 @@ class fineTuning_utils:
             totalStringList.append('\n' + '\n')
         totalStringList = ' '.join(totalStringList)
 
+        # Save the Total StringList to a .txt file, so we can check it while the model is training
+        with open(r'C:\Users\alder\Desktop\Projects\Fine Tuning Data\fineTuning_str.txt', 'w') as file:
+            try:
+                file.write(totalStringList)
+            except Exception as e:
+                print('Unable to save')
+
+        print(totalStringList)
+
         return totalStringList
 
-    def processFinancialNews (self, dataPandasFormat):
+    def loadAndProcessFinancialNews (self, newsDataset):
 
         # it is taken a DataFrame
-        dataPandasFormat['Day'] = pd.to_datetime(dataPandasFormat['Date']) - datetime.today()
+        newsDataset['Day'] = (datetime.today() - pd.to_datetime(newsDataset['Date'])).dt.days
+        newsDataset['Day'] = newsDataset['Day'].astype(str) + ' days ago'
+        newsDataset.loc[newsDataset['Day'] == '0 days ago', 'Day'] = 'Today'
+        newsDataset.loc[newsDataset['Day'] == '1 days ago', 'Day'] = 'Yesterday'
 
-        dataPandasFormat.loc[dataPandasFormat['Day'].astype(int) < -30, 'Day'] = 'More than one Month ago'
-        dataPandasFormat.loc[dataPandasFormat['Day'] < -8 & dataPandasFormat['Day'] > -14, 'Day'] = 'Two weeks ago'
-        dataPandasFormat.loc[dataPandasFormat['Day'] < -14 & dataPandasFormat['Day'] > -30, 'Day'] = 'More than Two weeks ago'
-        dataPandasFormat.loc[dataPandasFormat['Day'] < -2 & dataPandasFormat['Day'] > -1, 'Day'] = 'Two Days ago'
-        dataPandasFormat.loc[dataPandasFormat['Day'] == -1, 'Day'] = 'Yesterday'
-        dataPandasFormat.loc[dataPandasFormat['Day'] == 0, 'Day'] = 'Today'
+        file = newsDataset
+        connection = psycopg2.connect(
+            database="YahooFinance",
+            user="postgres",
+            password="Lavagna123!",
+            host="localhost",
+            port="5432"
+        )
+        engine = create_engine('postgresql://postgres:Lavagna123!@localhost:5432/YahooFinance')
+        file.to_sql('News_Scraping_Data_V3_chatbot', engine, if_exists='replace', index=False)
+        connection.close()
 
-        print(dataPandasFormat['Day'])
-
-        return dataPandasFormat
-
-
+        return newsDataset
 
 # Text loader
 
