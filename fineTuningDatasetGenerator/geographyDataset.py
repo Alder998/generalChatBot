@@ -75,7 +75,7 @@ class geographyScraper:
         finalDataset = pd.concat([baseData, citiesDatabase], axis=0).drop_duplicates(keep='last').reset_index(drop=True)
 
         # merge the additional Information
-        allCitiesFile = pd.read_excel(r"C:\Users\alder\Desktop\Projects\Fine Tuning Data\World Cities.xlsx")
+        allCitiesFile = pd.read_excel(r"C:\Users\alder\Desktop\Projects\Fine Tuning Data\Europe_cities.xlsx")
         finalDataset = finalDataset.merge(
             allCitiesFile[[['city','lat','lng','country','admin_name','population']]],
             left_on=['City'], right_on=['city'], how='left')

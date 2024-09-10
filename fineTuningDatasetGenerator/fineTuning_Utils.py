@@ -13,7 +13,7 @@ class fineTuning_utils:
     def __init__(self):
         pass
 
-    def getFineTuningContinuousTextFromDataset (self, datasetPandas):
+    def getFineTuningContinuousTextFromDataset (self, datasetPandas, return_special_tokens=False):
 
         # Prepare the dataset in JSON format, before converting it into continuous text
         dictList = list()
@@ -31,6 +31,18 @@ class fineTuning_utils:
                 # Compose the long Text for any single Item
                 continuousTextSingleString = ('<' + key.upper() + '> ' + str(value) + ' </' + key.upper() + '> ' + '\n')
                 totalStringList.append(continuousTextSingleString)
+
+            if return_special_tokens:
+                specialTokens = []
+                for key, value in singleDict.items():
+                    special_token_start = ('<' + key.upper() + '>')
+                    special_token_end = ('</' + key.upper() + '>')
+                    specialTokens.append(special_token_start)
+                    specialTokens.append(special_token_end)
+
+                print(specialTokens)
+                return specialTokens
+
             totalStringList.append('\n' + '\n')
         totalStringList = ' '.join(totalStringList)
 

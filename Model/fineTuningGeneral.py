@@ -17,6 +17,12 @@ class fineTuningGeneral:
         tokenizer = GPT2Tokenizer.from_pretrained(baseModel)
         model = GPT2LMHeadModel.from_pretrained(baseModel)
 
+        # Add special Tokens (dataset columns)
+        special_tokens_dict = {
+            'additional_special_tokens': utils.fineTuning_utils().getFineTuningContinuousTextFromDataset(datasetPandas, return_special_tokens=True)}
+        tokenizer.add_special_tokens(special_tokens_dict)
+        model.resize_token_embeddings(len(tokenizer))
+
         # Prepare the data that you want your Model to be trained on
         preparedText = utils.fineTuning_utils().getFineTuningContinuousTextFromDataset(datasetPandas)
 
