@@ -75,17 +75,48 @@ class geographyScraper:
         finalDataset = pd.concat([baseData, citiesDatabase], axis=0).drop_duplicates(keep='last').reset_index(drop=True)
 
         # merge the additional Information
-        allCitiesFile = pd.read_excel(r"C:\Users\alder\Desktop\Projects\Fine Tuning Data\Europe_cities.xlsx")
+        allCitiesFile = pd.read_excel(r"C:\Users\alder\Desktop\Projects\Fine Tuning Data\Europe cities full.xlsx")
         finalDataset = finalDataset.merge(
-            allCitiesFile[[['city','lat','lng','country','admin_name','population']]],
+            allCitiesFile[['city','lat','lng','country','admin_name','population']],
             left_on=['City'], right_on=['city'], how='left')
+
+        # Avoid duplicated Columns
+        if 'lat_x' in finalDataset.columns:
+            finalDataset.loc[~finalDataset['lat_x'].isna() & finalDataset['lat_y'].isna(), 'lat'] = finalDataset['lat_x']
+            finalDataset.loc[~finalDataset['lat_y'].isna() & finalDataset['lat_x'].isna(), 'lat'] = finalDataset['lat_y']
+            del[finalDataset['lat_x']]
+            del[finalDataset['lat_y']]
+
+        if 'lng_x' in finalDataset.columns:
+            finalDataset.loc[~finalDataset['lng_x'].isna() & finalDataset['lng_y'].isna(), 'lng'] = finalDataset['lng_x']
+            finalDataset.loc[~finalDataset['lng_y'].isna() & finalDataset['lng_x'].isna(), 'lng'] = finalDataset['lng_y']
+            del[finalDataset['lng_x']]
+            del[finalDataset['lng_y']]
+
+        if 'city_x' in finalDataset.columns:
+            finalDataset.loc[~finalDataset['city_x'].isna() & finalDataset['city_y'].isna(), 'city'] = finalDataset['city_x']
+            finalDataset.loc[~finalDataset['city_y'].isna() & finalDataset['city_x'].isna(), 'city'] = finalDataset['city_y']
+            del[finalDataset['city_x']]
+            del[finalDataset['city_y']]
+
+        if 'country_x' in finalDataset.columns:
+            finalDataset.loc[~finalDataset['country_x'].isna() & finalDataset['country_y'].isna(), 'country'] = finalDataset['country_x']
+            finalDataset.loc[~finalDataset['country_y'].isna() & finalDataset['country_x'].isna(), 'country'] = finalDataset['country_y']
+            del[finalDataset['country_y']]
+            del[finalDataset['country_x']]
+
+        if 'population_x' in finalDataset.columns:
+            finalDataset.loc[~finalDataset['population_x'].isna() & finalDataset['population_y'].isna(), 'population'] = finalDataset['population_x']
+            finalDataset.loc[~finalDataset['population_y'].isna() & finalDataset['population_x'].isna(), 'population'] = finalDataset['population_y']
+            del[finalDataset['population_y']]
+            del[finalDataset['population_x']]
 
         finalDataset['Population'] = finalDataset['population'].apply(lambda x: f"{x:,}")
         del [finalDataset['population']]
         finalDataset['Region'] = finalDataset['admin_name']
         del [finalDataset['admin_name']]
 
-        finalDataset = finalDataset.drop_duplicates()
+        finalDataset = finalDataset.drop_duplicates(subset = ['City', 'City Description'])
 
         # Save the data in the database
         file = finalDataset

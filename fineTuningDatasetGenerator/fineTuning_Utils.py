@@ -40,7 +40,7 @@ class fineTuning_utils:
                     specialTokens.append(special_token_start)
                     specialTokens.append(special_token_end)
 
-                print(specialTokens)
+                print('Special Tokens: ', specialTokens)
                 return specialTokens
 
             totalStringList.append('\n' + '\n')
@@ -53,7 +53,7 @@ class fineTuning_utils:
             except Exception as e:
                 print('Unable to save')
 
-        print(totalStringList)
+        #print(totalStringList)
 
         return totalStringList
 

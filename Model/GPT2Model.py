@@ -35,8 +35,8 @@ class GPT2Model:
                                  max_new_tokens=100,
                                  eos_token_id=tokenizer.eos_token_id,
                                  pad_token_id=tokenizer.eos_token_id,
-                                 #repetition_penalty=2.0,
-                                 #no_repeat_ngram_size=5,
+                                 repetition_penalty=2.0,
+                                 no_repeat_ngram_size=5,
                                  early_stopping=True
                                  )
 
